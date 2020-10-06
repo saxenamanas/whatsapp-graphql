@@ -14,7 +14,7 @@ let num = 0;
 
 const typeDefs = `
   type Query {
-    getUsers:[User!]
+    getUsers(current:String!):[User!]
     chatHistory(first:String!,second:String!):[ChatMessage]!
   }
   type Mutation{
@@ -43,10 +43,13 @@ const typeDefs = `
 
 const resolvers = {
   Query: {
-    async getUsers(){
+    async getUsers(p,{current}){
       const users = await User.find({});
       console.log(users);
-      return users;
+      let filtered = users.filter((user)=>{
+        return user._id!=current
+      })
+      return filtered;
     },
     async chatHistory(parent,{first,second},ctx,info){
       let id = '';
